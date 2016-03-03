@@ -17,14 +17,14 @@ void glLib::line (int x0, int y0, int x1, int y1, TGAImage & image, const TGACol
         throw 2;
 
     bool swap = false;
-    if (x1 - x0 < y1 - y0)
+    if (x1 - x0 < std::abs (y1 - y0))
     {
         std::swap (x0, y0);
         std::swap (x1, y1);
         swap = true;
     }
 
-    const float ratio = (float)(y1 - y0) / (float)(x1 - x0);
+    const float ratio = (float)(std::abs (y1 - y0)) / (float)(x1 - x0);
     float error = 0.0;
     for (; x0 < x1; x0++)
     {
@@ -37,7 +37,7 @@ void glLib::line (int x0, int y0, int x1, int y1, TGAImage & image, const TGACol
 
         if (error > 0.5)
         {
-            y0 += 1;
+            y0 += (y1 > y0 ? 1 : -1);
             error -= 1;
         }
     }
