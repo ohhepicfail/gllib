@@ -22,8 +22,7 @@ public:
     const int & operator [] (int i);
     Vec3i (const Vec3i & that);
     const int & at (int i);
-private:
-    const Vec3i & operator = (const Vec3i &);
+    const Vec3i & operator = (const Vec3i & that);
 };
 
 #endif //GLLIB_VEC3_H

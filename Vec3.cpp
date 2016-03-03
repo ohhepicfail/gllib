@@ -17,6 +17,13 @@ const int & Vec3i::operator [] (int i)
     return value_[i];
 }
 
+const Vec3i & Vec3i::operator = (const Vec3i & that)
+{
+    for (int i = 0; i < 3; i++)
+        value_[i] = that.value_[i];
+    return *this;
+}
+
 Vec3i::Vec3i (const Vec3i & that)
 {
     for (int i = 0; i < 3; i++)

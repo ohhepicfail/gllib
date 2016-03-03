@@ -3,5 +3,5 @@ project(gllib)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -Wextra -std=c++11")
 
-set(SOURCE_FILES main.cpp tgaimage.cpp tgaimage.h glLib.cpp glLib.h Model.cpp Model.h Vec3.cpp Vec3.h)
+set(SOURCE_FILES main.cpp tgaimage.cpp tgaimage.h glLib.cpp glLib.h Model.cpp Model.h Vec3.cpp Vec3.h Errors.h)
 add_executable(gllib ${SOURCE_FILES})

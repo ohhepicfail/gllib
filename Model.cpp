@@ -7,16 +7,6 @@
 #include <string.h>
 #include "Model.h"
 
-
-enum Errors
-{
-    NULL_FILENAME,
-    NULL_FILE,
-    NO_MEMORY_FOR_ALL_FILE,
-    NO_ALL_FILE_WAS_READ,
-    NO_MODEL_IN_FILE
-};
-
 Model::Model ():
     verts_ (0),
     faces_ (0)
@@ -39,7 +29,7 @@ void Model::open (char * filename)
         throw NULL_FILE;
 
     fseek (file, 0, SEEK_END);
-    size_t fsize = ftell (file);
+    size_t fsize = (size_t) ftell (file);
     fseek (file, 0, SEEK_SET);
 
     char * obj = (char *) malloc (fsize * sizeof (char));
@@ -90,6 +80,30 @@ void Model::open (char * filename)
     /*for (int i = 0; i < verts_.size (); i++)
         printf ("%f\t%f\t%f\n", verts_[i].x_, verts_[i].y_, verts_[i].z_);
     for (int i = 0; i < faces_.size (); i++)
-        printf ("%d\t%d\t%d\n", faces_[i].at (0), faces_[i].at (1), faces_[i].at (2)); */
+        printf ("%d   \t%d   \t%d\n", faces_[i].at (0), faces_[i].at (1), faces_[i].at (2));*/
+}
 
+size_t Model::nfaces ()
+{
+    return faces_.size ();
+}
+size_t Model::nverts ()
+{
+    return verts_.size ();
+}
+
+Vec3f Model::vert (size_t i)
+{
+    if (i >= verts_.size ())
+        printf ("%lu   \t%lu\n", i, verts_.size ());
+        //throw (unsigned) TOO_HIGH_VERT_INDEX;
+    return verts_[i];
+}
+
+
+Vec3i Model::face (size_t i)
+{
+    if (i >= faces_.size ())
+        throw (unsigned) TOO_HIGH_FACE_INDEX;
+    return faces_[i];
 }
