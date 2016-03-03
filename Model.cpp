@@ -5,11 +5,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <cmath>
 #include "Model.h"
+#include "Vec3.h"
 
 Model::Model ():
     verts_ (0),
-    faces_ (0)
+    faces_ (0),
+    non_standard_ (false),
+    shift_for_standard_ (1)
 {
 
 }
@@ -55,6 +59,8 @@ void Model::open (char * filename)
 
             sscanf (pobj, "%c%f%f%f", &trash, &vec.x_, &vec.y_, &vec.z_);
 
+            test_standard (vec);
+
             verts_.push_back (vec);
         }
         else if (strcmp (str_to_cmp, "f ") == 0)
@@ -77,10 +83,47 @@ void Model::open (char * filename)
         pobj = strtok (NULL, "\n");
     }
 
-    /*for (int i = 0; i < verts_.size (); i++)
-        printf ("%f\t%f\t%f\n", verts_[i].x_, verts_[i].y_, verts_[i].z_);
-    for (int i = 0; i < faces_.size (); i++)
-        printf ("%d   \t%d   \t%d\n", faces_[i].at (0), faces_[i].at (1), faces_[i].at (2));*/
+    if (is_non_standard ())
+        make_standard (verts_);
+}
+
+void Model::test_standard (const Vec3f & vec)
+{
+    const size_t SHIFT = 2;
+    if (std::abs (vec.x_) > 1 || std::abs (vec.y_) > 1 || std::abs (vec.z_) > 1)
+    {
+        non_standard_ = true;
+        float x = std::abs (vec.x_);
+        float y = std::abs (vec.y_);
+        float z = std::abs (vec.z_);
+
+        size_t del_counter = 1;
+        while (x > 1.0 || y > 1.0 || z > 1.0)
+        {
+            x /= SHIFT;
+            y /= SHIFT;
+            z /= SHIFT;
+            del_counter *= SHIFT;
+        }
+        if (del_counter > shift_for_standard_)
+            shift_for_standard_ = del_counter;
+    }
+}
+
+
+bool Model::is_non_standard ()
+{
+    return non_standard_;
+}
+
+void Model::make_standard (std::vector <Vec3f> & verts)
+{
+    for (size_t i = 0; i < verts.size (); i++)
+    {
+        verts[i].x_ /= shift_for_standard_;
+        verts[i].y_ /= shift_for_standard_;
+        verts[i].z_ /= shift_for_standard_;
+    }
 }
 
 size_t Model::nfaces ()
@@ -95,8 +138,7 @@ size_t Model::nverts ()
 Vec3f Model::vert (size_t i)
 {
     if (i >= verts_.size ())
-        printf ("%lu   \t%lu\n", i, verts_.size ());
-        //throw (unsigned) TOO_HIGH_VERT_INDEX;
+        throw (unsigned) TOO_HIGH_VERT_INDEX;
     return verts_[i];
 }
 

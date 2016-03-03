@@ -8,34 +8,22 @@ const TGAColor white = TGAColor (255, 255, 255, 255);
 const TGAColor red   = TGAColor (255, 0,   0,   255);
 const TGAColor green = TGAColor (0,   255, 0,   255);
 
-const int width  = 800;
-const int height = 800;
+const int width  = 10000;
+const int height = 10000;
 
 int main ()
 {
     Model model;
     try
     {
-        model.open ("african_head.obj");
+        model.open ("obj/navigator.obj");
     }
     catch (...)
     {
-        printf ("hoho\n");
+        printf ("Can't open the model\n");
     }
 
     TGAImage image(width, height, TGAImage::RGB);
-    //image.set(52, 41, white);
-
-    /*try
-    {
-        glLib::line (453, 341, 452, 347, image, green);
-        glLib::line (452, 347, 458, 345, image, red);
-        glLib::line (458, 345, 453, 341, image, white);
-    }
-    catch (...)
-    {
-        printf ("bad agruments in glLib::line ()\n");
-    } */
 
     try
     {

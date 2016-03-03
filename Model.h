@@ -21,6 +21,11 @@ public:
     Vec3f  vert (size_t i);
     Vec3i  face (size_t i);
 private:
+    void test_standard (const Vec3f & vec);
+    bool is_non_standard ();
+    void make_standard (std::vector <Vec3f> & verts);
+    bool non_standard_;
+    size_t shift_for_standard_;
     std::vector <Vec3f> verts_;
     std::vector <Vec3i> faces_;
 };
