@@ -28,14 +28,14 @@ int main ()
 
     /*try
     {
-        glLib::line (13, 41, 80, 51, image, white);
-        glLib::line (20, 13, 40, 80, image, red);
-        glLib::line (80, 40, 13, 20, image, green);
+        glLib::line (453, 341, 452, 347, image, green);
+        glLib::line (452, 347, 458, 345, image, red);
+        glLib::line (458, 345, 453, 341, image, white);
     }
     catch (...)
     {
         printf ("bad agruments in glLib::line ()\n");
-    }*/
+    } */
 
     try
     {
@@ -50,8 +50,13 @@ int main ()
                 int y0 = (v0.y_ + 1.) * height / 2.;
                 int x1 = (v1.x_ + 1.) * width / 2.;
                 int y1 = (v1.y_ + 1.) * height / 2.;
+                //printf ("j = %lu\t X %d\t%d\n", j,  x0, x1);
+                //printf ("j = %lu\t Y %d\t%d\n", j,  y0, y1);
                 glLib::line (x0, y0, x1, y1, image, white);
             }
+            //printf ("\n");
+            //image.flip_vertically();
+            //image.write_tga_file("output.tga");
         }
     }
     catch (unsigned error)
