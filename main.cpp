@@ -1,5 +1,8 @@
 //epicfail@gmail.com
 
+//todo include and use cfuncmonitor
+//todo macros ASSERT for all classes
+
 #include "tgaimage.h"
 #include "glLib.h"
 #include "Model.h"
@@ -14,9 +17,10 @@ const int height = 10000;
 int main ()
 {
     Model model;
+
     try
     {
-        model.open ("obj/navigator.obj");
+        model.open ("obj/statue_head.obj");
     }
     catch (...)
     {

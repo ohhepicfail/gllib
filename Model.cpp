@@ -6,8 +6,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <cmath>
+#include <assert.h>
 #include "Model.h"
-#include "Vec3.h"
 
 Model::Model ():
     verts_ (0),
@@ -15,7 +15,17 @@ Model::Model ():
     non_standard_ (false),
     shift_for_standard_ (1)
 {
+}
 
+
+Model::Model (const Model & that)
+{
+    assert (("Ooooooh, nooooo! You use copy constructor Model::Model (const Model &)", 0));
+}
+
+void Model::operator = (const Model & that)
+{
+    assert (("Ooooooh, nooooo! You use Model::operator = (const Model & that)", 0));
 }
 
 Model::~Model ()
@@ -23,7 +33,7 @@ Model::~Model ()
 
 }
 
-void Model::open (char * filename)
+void Model::open (const char * filename)
 {
     if (!filename)
         throw NULL_FILENAME;
@@ -83,12 +93,18 @@ void Model::open (char * filename)
         pobj = strtok (NULL, "\n");
     }
 
-    if (is_non_standard ())
-        make_standard (verts_);
+    make_standard (verts_);
+
+    if (nverts () == 0)
+        throw NO_VERTS_IN_FILE;
+    if (nfaces () == 0)
+        throw NO_FACES_IN_FILE;
 }
 
 void Model::test_standard (const Vec3f & vec)
 {
+    //todo if all coordinates to small, i must correct it
+
     const size_t SHIFT = 2;
     if (std::abs (vec.x_) > 1 || std::abs (vec.y_) > 1 || std::abs (vec.z_) > 1)
     {
@@ -118,11 +134,14 @@ bool Model::is_non_standard ()
 
 void Model::make_standard (std::vector <Vec3f> & verts)
 {
-    for (size_t i = 0; i < verts.size (); i++)
+    if (is_non_standard ())
     {
-        verts[i].x_ /= shift_for_standard_;
-        verts[i].y_ /= shift_for_standard_;
-        verts[i].z_ /= shift_for_standard_;
+        for (size_t i = 0; i < verts.size (); i++)
+        {
+            verts[i].x_ /= shift_for_standard_;
+            verts[i].y_ /= shift_for_standard_;
+            verts[i].z_ /= shift_for_standard_;
+        }
     }
 }
 

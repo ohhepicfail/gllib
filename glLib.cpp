@@ -2,11 +2,12 @@
 
 #include <cmath>
 #include "glLib.h"
+#include "Errors.h"
 
 void glLib::line (int x0, int y0, int x1, int y1, TGAImage & image, const TGAColor & color)
 {
     if (x0 < 0 || x1 < 0 || y0 < 0 || y1 < 0)
-        throw 1;
+        throw NEGATIVE_COORDINATE;
 
     bool swap = false;
     if (std::abs (x1 - x0) < std::abs (y1 - y0))
@@ -23,7 +24,7 @@ void glLib::line (int x0, int y0, int x1, int y1, TGAImage & image, const TGACol
     }
 
     if (x1 > image.get_width () || std::max (y0, y1) > image.get_height ())
-        throw 2;
+        throw TOO_BIG_COORDINATE;
 
     const float ratio = (float)(std::fabs (y1 - y0)) / (float)(x1 - x0);
     float error = 0.0;
