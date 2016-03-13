@@ -100,7 +100,9 @@ private:
     std::vector <Vec3f> verts_;     //!<array of verts
     std::vector <Vec3i> faces_;     //!<array of faces
     bool    non_standard_;          //!<flag for nonstandard verts
-    size_t  shift_for_standard_;    //!<stores a shift form the standard
+    int     shift_for_standard_;    //!<stores a shift form the standard
+                                    //!<it > 0 if .obj has coordinate > 1.0
+                                    //!<it < 0 if all coordinates if .obj < 0.1
 };
 
 
