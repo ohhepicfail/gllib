@@ -7,7 +7,7 @@
 #define GLLIB_MODEL_H
 
 #include <vector>
-#include "Vec3.h"
+#include "Vec.h"
 #include "Errors.h"
 
 
@@ -97,10 +97,10 @@ private:
     //}-------------------------------------------------------
     void    make_standard (std::vector <Vec3f> & verts);
 
-    bool    non_standard_;          //!<flag for nonstandard verts
-    size_t  shift_for_standard_;    //!<stores a shift form the standard
     std::vector <Vec3f> verts_;     //!<array of verts
     std::vector <Vec3i> faces_;     //!<array of faces
+    bool    non_standard_;          //!<flag for nonstandard verts
+    size_t  shift_for_standard_;    //!<stores a shift form the standard
 };
 
 

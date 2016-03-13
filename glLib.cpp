@@ -4,6 +4,7 @@
 #include "glLib.h"
 #include "Errors.h"
 
+
 void glLib::line (int x0, int y0, int x1, int y1, TGAImage & image, const TGAColor & color)
 {
     if (x0 < 0 || x1 < 0 || y0 < 0 || y1 < 0)

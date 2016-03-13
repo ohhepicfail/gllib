@@ -10,22 +10,22 @@
 #include "Model.h"
 
 Model::Model ():
-    verts_ (0),
-    faces_ (0),
-    non_standard_ (false),
-    shift_for_standard_ (1)
+        verts_ (0),
+        faces_ (0),
+        non_standard_ (false),
+        shift_for_standard_ (1)
 {
 }
 
 
 Model::Model (const Model & that)
 {
-    assert (("Ooooooh, nooooo! You use copy constructor Model::Model (const Model &)", 0));
+    assert (("Ooooooh, nooooo! You use copy constructor Model::Model (const Model &)", &that, false));
 }
 
 void Model::operator = (const Model & that)
 {
-    assert (("Ooooooh, nooooo! You use Model::operator = (const Model & that)", 0));
+    assert (("Ooooooh, nooooo! You use Model::operator = (const Model & that)", &that, false));
 }
 
 Model::~Model ()
@@ -80,9 +80,16 @@ void Model::open (const char * filename)
             {
                 if (*pobj == ' ')
                 {
-                    pobj++;
-                    sscanf (pobj, "%d", &vec[i]);
-                    i++;
+                    try
+                    {
+                        pobj++;
+                        sscanf (pobj, "%d", &vec[i]);
+                        i++;
+                    }
+                    catch (...)
+                    {
+                        printf ("error with taking item\n");
+                    }
                 }
                 else
                     pobj++;

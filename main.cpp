@@ -1,11 +1,9 @@
 //epicfail@gmail.com
 
-//todo include and use cfuncmonitor
-//todo macros ASSERT for all classes
-
 #include "tgaimage.h"
 #include "glLib.h"
 #include "Model.h"
+
 
 const TGAColor white = TGAColor (255, 255, 255, 255);
 const TGAColor red   = TGAColor (255, 0,   0,   255);
@@ -44,7 +42,7 @@ int main ()
                 int y1 = (v1.y_ + 1.) * height / 2.;
                 //printf ("j = %lu\t X %d\t%d\n", j,  x0, x1);
                 //printf ("j = %lu\t Y %d\t%d\n", j,  y0, y1);
-                glLib::line (x0, y0, x1, y1, image, white);
+                glLib::line (x0, y0, x1, y1, image, green);
             }
             //printf ("\n");
             //image.flip_vertically();
