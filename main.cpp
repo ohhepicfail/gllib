@@ -15,17 +15,34 @@ const int height = 10000;
 
 int main ()
 {
-    // todo make a normal error handling
-
     Model model;
 
     try
     {
-        model.open ("obj/iPhone_6.obj");
+        model.open ("obj/navigator.obj");
+        model.choose_the_best_cood (width, height);
     }
-    catch (...)
+    catch (Errors error)
     {
-        printf ("Can't open the model\n");
+        if (error == NULL_FILENAME)
+            eprint ("NULL_FILENAME");
+        else if (error == NULL_FILE)
+            eprint ("NULL_FILE");
+        else if (error == NO_MEMORY_FOR_ALL_FILE)
+            eprint ("NO_MEMORY_FOR_ALL_FILE");
+        else if (error == NO_ALL_FILE_WAS_READ)
+            eprint ("NO_ALL_FILE_WAS_READ");
+        else if (error == NO_MODEL_IN_FILE)
+            eprint ("NO_MODEL_IN_FILE");
+        else if (error == NO_VERTS_IN_FILE)
+            eprint ("NO_VERTS_IN_FILE");
+        else if (error == NO_FACES_IN_FILE)
+            eprint ("NO_FACES_IN_FILE");
+        else if (error == ZERO_SIZE)
+            eprint ("ZERO_SIZE");
+        else
+            eprint ("else");
+        abort ();
     }
 
     TGAImage image(width, height, TGAImage::RGB);
@@ -52,10 +69,10 @@ int main ()
                     abort ();
                 }
 
-                int x0 = (v0.x_ + 1.) * width / 2.;
-                int y0 = (v0.y_ + 1.) * height / 2.;
-                int x1 = (v1.x_ + 1.) * width / 2.;
-                int y1 = (v1.y_ + 1.) * height / 2.;
+                int x0 = (int) v0.x_;
+                int y0 = (int) v0.y_;
+                int x1 = (int) v1.x_;
+                int y1 = (int) v1.y_;
 
                 try
                 {
@@ -72,9 +89,6 @@ int main ()
                     abort ();
                 }
             }
-            //printf ("\n");
-            //image.flip_vertically();
-            //image.write_tga_file("output.tga");
         }
     }
     catch (unsigned error)

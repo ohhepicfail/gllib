@@ -9,11 +9,12 @@
 #include <assert.h>
 #include "Model.h"
 
+#define eprint( error )         printf ("%s in file %s on line %d\n", #error, __FILE__ , __LINE__)
+
+
 Model::Model ():
         verts_ (0),
-        faces_ (0),
-        non_standard_ (false),
-        shift_for_standard_ (-1) //!<I need it if all coordinates are smaller than 0.1 (func test_standard)
+        faces_ (0)
 {
 }
 
@@ -69,8 +70,6 @@ void Model::open (const char * filename)
 
             sscanf (pobj, "%c%f%f%f", &trash, &vec.x_, &vec.y_, &vec.z_);
 
-            test_standard (vec);
-
             verts_.push_back (vec);
         }
         else if (strcmp (str_to_cmp, "f ") == 0)
@@ -86,9 +85,13 @@ void Model::open (const char * filename)
                         sscanf (pobj, "%d", &vec[i]);
                         i++;
                     }
-                    catch (...)
+                    catch (Errors error)
                     {
-                        printf ("error with taking item\n");
+                        if (error == INDEX_OUT_OF_BOUNDS)
+                            eprint ("INDEX_OUT_OF_BOUNDS");
+                        else
+                            eprint ("else");
+                        abort ();
                     }
                 }
                 else
@@ -100,112 +103,63 @@ void Model::open (const char * filename)
         pobj = strtok (NULL, "\n");
     }
 
-    make_standard (verts_);
-
     if (nverts () == 0)
         throw NO_VERTS_IN_FILE;
     if (nfaces () == 0)
         throw NO_FACES_IN_FILE;
 }
 
-void Model::test_standard (const Vec3f & vec)
-{
-    // todo make this code easier
-
-    // todo make correct coordinates on numbers different from 10
-
-    const size_t SHIFT = 2;
-    if (std::abs (vec.x_) > 1 || std::abs (vec.y_) > 1 || std::abs (vec.z_) > 1)
-    {
-        non_standard_ = true;
-        float x = std::abs (vec.x_);
-        float y = std::abs (vec.y_);
-        float z = std::abs (vec.z_);
-
-        int del_counter = 1;
-        while (x > 1.0 || y > 1.0 || z > 1.0)
-        {
-            x /= SHIFT;
-            y /= SHIFT;
-            z /= SHIFT;
-            del_counter *= SHIFT;
-        }
-        if (del_counter > shift_for_standard_)
-            shift_for_standard_ = del_counter;
-    }
-    else if ((std::abs (vec.x_) < 0.1 || std::abs (vec.y_) < 0.1 || std::abs (vec.z_) < 0.1)
-                && shift_for_standard_ < 0)
-    {
-        non_standard_ = true;
-        float x = std::abs (vec.x_);
-        float y = std::abs (vec.y_);
-        float z = std::abs (vec.z_);
-
-        int del_counter = -1;
-        while (x < 0.1 || y < 0.1 || z < 0.1)
-        {
-            x *= SHIFT;
-            y *= SHIFT;
-            z *= SHIFT;
-            del_counter *= SHIFT;
-        }
-        if (del_counter > shift_for_standard_)      //!<I must take the minimum of shifts!
-            shift_for_standard_ = del_counter;
-    }
-    else if (shift_for_standard_ <= 0)              //!<because I can correct non_standard only if I have some
-        non_standard_ = false;                      //!<coordinates <= 0.1. But can't correct, if some coordinates > 1
-}
-
-
-bool Model::is_non_standard ()
-{
-    return non_standard_;
-}
-
-void Model::make_standard (std::vector <Vec3f> & verts)
-{
-    if (is_non_standard ())
-    {
-        for (size_t i = 0; i < verts.size (); i++)
-        {
-            if (shift_for_standard_ > 0)        //!<.obj contains coodrinate > 1.0
-            {
-                verts[i].x_ /= shift_for_standard_;
-                verts[i].y_ /= shift_for_standard_;
-                verts[i].z_ /= shift_for_standard_;
-            }
-            else
-            {
-                int abs_shift = -shift_for_standard_; //!< take an absolute value
-
-                verts[i].x_ *= abs_shift;
-                verts[i].y_ *= abs_shift;
-                verts[i].z_ *= abs_shift;
-            }
-        }
-    }
-}
-
 size_t Model::nfaces ()
 {
     return faces_.size ();
 }
+
 size_t Model::nverts ()
 {
     return verts_.size ();
 }
 
-Vec3f Model::vert (size_t i)
+const Vec3f & Model::vert (size_t i)
 {
     if (i >= verts_.size ())
         throw (unsigned) TOO_HIGH_VERT_INDEX;
     return verts_[i];
 }
 
-
-Vec3i Model::face (size_t i)
+const Vec3i & Model::face (size_t i)
 {
     if (i >= faces_.size ())
         throw (unsigned) TOO_HIGH_FACE_INDEX;
     return faces_[i];
+}
+
+void Model::choose_the_best_cood (size_t width, size_t height)
+{
+    if (!width || !height)
+        throw ZERO_SIZE;
+
+    float x_min = 0.0;      //left
+    float x_max = 0.0;      //right
+    float y_min = 0.0;      //bottom
+    float y_max = 0.0;      //top
+
+    for (size_t i = 0; i < nverts (); i++)
+    {
+        Vec3f v = vert (i);
+
+        x_min = x_min < v.x_ ? x_min : v.x_;
+        y_min = y_min < v.y_ ? y_min : v.y_;
+        x_max = x_max > v.x_ ? x_max : v.x_;
+        y_max = y_max > v.y_ ? y_max : v.y_;
+    }
+    // todo if x_min or something else == 0!!!
+    float ratio_x = (float) std::min (std::abs (1.0 * width / x_min), std::abs (1.0 * width / x_max));
+    float ratio_y = (float) std::min (std::abs (1.0 * height / y_min), std::abs (1.0 * height / y_max));
+    float best_ratio = std::min (ratio_x, ratio_y);
+
+    for (size_t i = 0; i < nverts (); i++)
+    {
+        verts_[i].x_ = (verts_[i].x_ * best_ratio + width) / 2;
+        verts_[i].y_ = (verts_[i].y_ * best_ratio + height) / 2;
+    }
 }

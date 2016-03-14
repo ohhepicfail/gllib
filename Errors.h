@@ -20,7 +20,8 @@ enum Errors
     NO_FACES_IN_FILE,           //!<index is more than number of faces in array
     NEGATIVE_COORDINATE,        //!<coordinate is less than zero
     TOO_BIG_COORDINATE,         //!<coordinate is bigger than image width or height
-    INDEX_OUT_OF_BOUNDS         //!<array index out of bounds
+    INDEX_OUT_OF_BOUNDS,        //!<array index out of bounds
+    ZERO_SIZE                   //!<used a number which meaning is zero, but it's invalid value
 };
 
 #endif //GLLIB_ERRORS_H

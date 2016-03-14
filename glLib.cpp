@@ -24,8 +24,16 @@ void glLib::line (int x0, int y0, int x1, int y1, TGAImage & image, const TGACol
         std::swap (y0, y1);
     }
 
-    if (x1 > image.get_width () || std::max (y0, y1) > image.get_height ())
-        throw TOO_BIG_COORDINATE;
+    if (swap)
+    {
+        if (std::max (x0, x1) > image.get_height () || std::max (y0, y1) > image.get_width ())
+            throw TOO_BIG_COORDINATE;
+    }
+    else
+    {
+        if (std::max (x0, x1) > image.get_width () || std::max (y0, y1) > image.get_height ())
+            throw TOO_BIG_COORDINATE;
+    }
 
     const float ratio = (float)(std::fabs (y1 - y0)) / (float)(x1 - x0);
     float error = 0.0;

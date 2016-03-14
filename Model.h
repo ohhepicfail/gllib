@@ -14,8 +14,9 @@
 class Model
 {
 public:
-    Model   ();
-    ~Model  ();
+    Model ();
+
+    ~Model ();
 
     //{-------------------------------------------------------
     //! @brief open .obj file and save faces ans verts into arrays
@@ -30,17 +31,17 @@ public:
     //! @throw NO_VERTS_IN_FILE         file doesn't contain verts
     //! @throw NO_FACES_IN_FILE         file doesn't contain faces
     //}-------------------------------------------------------
-    void    open (const char * filename);
+    void open (const char *filename);
 
     //{-------------------------------------------------------
     //! @return number of faces with contained in this model
     //}-------------------------------------------------------
-    size_t  nfaces ();
+    size_t nfaces ();
 
     //{-------------------------------------------------------
     //! @return number of verts with contained in this model
     //}-------------------------------------------------------
-    size_t  nverts ();
+    size_t nverts ();
 
     //{-------------------------------------------------------
     //! @param i vert index
@@ -49,7 +50,7 @@ public:
     //!
     //! @return vert with index i
     //}-------------------------------------------------------
-    Vec3f   vert (size_t i);
+    const Vec3f &vert (size_t i);
 
     //{-------------------------------------------------------
     //! @param i face index
@@ -58,7 +59,19 @@ public:
     //!
     //! @return face with index i
     //}-------------------------------------------------------
-    Vec3i   face (size_t i);
+    const Vec3i &face (size_t i);
+
+    //{-------------------------------------------------------
+    //! @brief change the coordinates to the image has been in full screen
+    //!
+    //! @param width    Image width
+    //! @param height   Image height
+    //!
+    //! @throw ZERO_SIZE    width or height is 0
+    //!
+    //! @warning it can greatly slow down program
+    //}-------------------------------------------------------
+    void    choose_the_best_cood (size_t width, size_t height);
 private:
     //{-------------------------------------------------------
     //! @brief copy constructor is disabled
@@ -74,35 +87,8 @@ private:
     //}-------------------------------------------------------
     void    operator = (const Model & that);
 
-    //{-------------------------------------------------------
-    //! @brief if all verts are less than 0.1 or are more than 1, we must understand it
-    //!
-    //! @param vec one vert
-    //!
-    //! @warning I'm so sorry, but it works long :(
-    //}-------------------------------------------------------
-    void    test_standard (const Vec3f & vec);
-
-    //{-------------------------------------------------------
-    //! @brief if we have nonstandard verts, function says it to us
-    //!
-    //! @return true if nonstandard, else false
-    //}-------------------------------------------------------
-    bool    is_non_standard ();
-
-    //{-------------------------------------------------------
-    //! @brief if verts are nonstandard, function correct them
-    //!
-    //! @return true if nonstandard, else false
-    //}-------------------------------------------------------
-    void    make_standard (std::vector <Vec3f> & verts);
-
     std::vector <Vec3f> verts_;     //!<array of verts
     std::vector <Vec3i> faces_;     //!<array of faces
-    bool    non_standard_;          //!<flag for nonstandard verts
-    int     shift_for_standard_;    //!<stores a shift form the standard
-                                    //!<it > 0 if .obj has coordinate > 1.0
-                                    //!<it < 0 if all coordinates if .obj < 0.1
 };
 
 
