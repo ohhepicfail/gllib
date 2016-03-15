@@ -17,7 +17,7 @@ int main ()
 
     try
     {
-        model.open ("obj/iPhone_6.obj");
+        model.open ("obj/statue_head.obj");
         model.choose_the_best_cood (width, height);
     }
     catch (Error err)
@@ -40,7 +40,7 @@ int main ()
             err.print_error ();
             exit (1);
         }
-        for (size_t j = 0; j < 5; j++)
+        for (size_t j = 0; j < 3; j++)
         {
             Vec3f v0, v1;
             try
