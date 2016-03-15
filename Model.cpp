@@ -9,8 +9,6 @@
 #include <assert.h>
 #include "Model.h"
 
-#define eprint( error )         printf ("%s in file %s on line %d\n", #error, __FILE__ , __LINE__)
-
 
 Model::Model ():
         verts_ (0),
@@ -37,11 +35,11 @@ Model::~Model ()
 void Model::open (const char * filename)
 {
     if (!filename)
-        throw NULL_FILENAME;
+        THROW (NULL_FILENAME);
 
     FILE * file = fopen (filename, "rb");
     if (!file)
-        throw NULL_FILE;
+        THROW (NULL_FILE);
 
     fseek (file, 0, SEEK_END);
     size_t fsize = (size_t) ftell (file);
@@ -49,15 +47,15 @@ void Model::open (const char * filename)
 
     char * obj = (char *) malloc (fsize * sizeof (char));
     if (!obj)
-        throw NO_MEMORY_FOR_ALL_FILE;
+        THROW (NO_MEMORY_FOR_ALL_FILE);
 
     size_t fread_size = fread (obj, sizeof (char), fsize, file);
     if (fsize != fread_size)
-        throw NO_ALL_FILE_WAS_READ;
+        THROW (NO_ALL_FILE_WAS_READ);
 
     char * pobj = strtok (obj, "\n");
     if (!pobj)
-        throw NO_MODEL_IN_FILE;
+        THROW (NO_MODEL_IN_FILE);
 
     while (pobj)
     {
@@ -85,12 +83,9 @@ void Model::open (const char * filename)
                         sscanf (pobj, "%d", &vec[i]);
                         i++;
                     }
-                    catch (Errors error)
+                    catch (Error err)
                     {
-                        if (error == INDEX_OUT_OF_BOUNDS)
-                            eprint ("INDEX_OUT_OF_BOUNDS");
-                        else
-                            eprint ("else");
+                        err.print_error ();
                         abort ();
                     }
                 }
@@ -104,9 +99,9 @@ void Model::open (const char * filename)
     }
 
     if (nverts () == 0)
-        throw NO_VERTS_IN_FILE;
+        THROW (NO_VERTS_IN_FILE);
     if (nfaces () == 0)
-        throw NO_FACES_IN_FILE;
+        THROW (NO_FACES_IN_FILE);
 }
 
 size_t Model::nfaces ()
@@ -122,21 +117,21 @@ size_t Model::nverts ()
 const Vec3f & Model::vert (size_t i)
 {
     if (i >= verts_.size ())
-        throw (unsigned) TOO_HIGH_VERT_INDEX;
+        THROW (TOO_HIGH_VERT_INDEX);
     return verts_[i];
 }
 
 const Vec3i & Model::face (size_t i)
 {
     if (i >= faces_.size ())
-        throw (unsigned) TOO_HIGH_FACE_INDEX;
+        THROW (TOO_HIGH_FACE_INDEX);
     return faces_[i];
 }
 
 void Model::choose_the_best_cood (size_t width, size_t height)
 {
     if (!width || !height)
-        throw ZERO_SIZE;
+        THROW (ZERO_SIZE);
 
     float x_min = 0.0;      //left
     float x_max = 0.0;      //right

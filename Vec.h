@@ -5,13 +5,17 @@
 #ifndef GLLIB_VEC3_H
 #define GLLIB_VEC3_H
 
+#define THROW( type_error )     {\
+                                    Error err ( type_error, __FILE__, __LINE__, __PRETTY_FUNCTION__);\
+                                    throw err;\
+                                }
 
 #include <stddef.h>
 #include <stdio.h>
 #include "Errors.h"
 
 //! @brief class works with 3 numbers
-template <class t> class Vec3
+template <typename t> class Vec3
 {
 public:
     //{---------------------------------------------------------------
@@ -61,7 +65,7 @@ public:
         if (i == 2)
             return z_;
         else
-            throw INDEX_OUT_OF_BOUNDS;
+            THROW (INDEX_OUT_OF_BOUNDS);
     }
 
     //{---------------------------------------------------------------
@@ -84,7 +88,7 @@ public:
         if (i == 2)
             return z_;
         else
-            throw INDEX_OUT_OF_BOUNDS;
+            THROW (INDEX_OUT_OF_BOUNDS);
     }
 
     //{---------------------------------------------------------------
@@ -159,7 +163,7 @@ public:
         if (i == 1)
             return y_;
         else
-            throw INDEX_OUT_OF_BOUNDS;
+            THROW (INDEX_OUT_OF_BOUNDS);
     }
 
     //{---------------------------------------------------------------
@@ -180,7 +184,7 @@ public:
         if (i == 1)
             return y_;
         else
-            throw INDEX_OUT_OF_BOUNDS;
+            THROW (INDEX_OUT_OF_BOUNDS);
     }
 
     //{---------------------------------------------------------------

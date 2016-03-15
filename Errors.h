@@ -7,7 +7,18 @@
 #ifndef GLLIB_ERRORS_H
 #define GLLIB_ERRORS_H
 
-enum Errors
+#include <stdio.h>
+
+//! @brief use in other files there are we throw something
+#define THROW( type_error )     {\
+                                    Error oh_now_I_have_an_error ( type_error, __FILE__, __LINE__, __PRETTY_FUNCTION__);\
+                                    throw oh_now_I_have_an_error;\
+                                }
+
+//{-------------------------------------------------------------------
+//! @brief enum with all errors
+//}-------------------------------------------------------------------
+enum error_type
 {
     NULL_FILENAME,              //!<char * filename is NULL
     NULL_FILE,                  //!<file pointer is NULL
@@ -22,6 +33,55 @@ enum Errors
     TOO_BIG_COORDINATE,         //!<coordinate is bigger than image width or height
     INDEX_OUT_OF_BOUNDS,        //!<array index out of bounds
     ZERO_SIZE                   //!<used a number which meaning is zero, but it's invalid value
+};
+
+class Error
+{
+public:
+
+    //{-------------------------------------------------------------------
+    //! @brief use it, when you are throwing an error
+    //!
+    //! @warning function write info into log_file__. If constructor can't open log_file__ all program aborting!
+    //! @warning if !filename, line <= 0 or !pretty_function constructor write it in log_file__ and abort program
+    //}-------------------------------------------------------------------
+    Error (error_type err, const char * filename, int line, const char * pretty_function);
+
+    ~Error ();
+
+    //{-------------------------------------------------------------------
+    //! @brief used when we catch error
+    //!
+    //! @warning if !filename, line <= 0 or !pretty_function constructor write it in log_file__ and abort program
+    //}-------------------------------------------------------------------
+    Error (const Error & that);
+
+    void print_error ();
+
+private:
+
+    //{-------------------------------------------------------------------
+    //! @brief file where the error occured
+    //!
+    //! @warning I'm so sorry, but I must use const size, because otherwise there is a cycle:(
+    //}-------------------------------------------------------------------
+    char filename_[256];
+
+    //! @brief line where the error occured
+    int line_;
+
+    //{-------------------------------------------------------------------
+    //! @brief function where the error occured
+    //!
+    //! @warning I'm so sorry, but I must use const size, because otherwise there is a cycle:(
+    //}-------------------------------------------------------------------
+    char function_[256];
+
+    //! @brief number of error
+    error_type error_;
+
+    //! @brief class Error writing all in this file
+    static FILE * log_file__;
 };
 
 #endif //GLLIB_ERRORS_H
