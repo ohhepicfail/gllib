@@ -2,8 +2,6 @@
 // Created by epicfail on 03.03.16.
 //
 
-//! @brief Enum with all errors for throw with are encountered in gllib
-
 #ifndef GLLIB_ERRORS_H
 #define GLLIB_ERRORS_H
 
@@ -35,12 +33,18 @@ enum error_type
     ZERO_SIZE                   //!<used a number which meaning is zero, but it's invalid value
 };
 
+//! @brief class to work with errors
 class Error
 {
 public:
 
     //{-------------------------------------------------------------------
     //! @brief use it, when you are throwing an error
+    //!
+    //! @param err              some enum "error_type" meaning
+    //! @param filename         name of the file where error occured
+    //! @param line             line in the file where error occured
+    //! @param pretty_function  name of the function where error occured
     //!
     //! @warning function write info into log_file__. If constructor can't open log_file__ all program aborting!
     //! @warning if !filename, line <= 0 or !pretty_function constructor write it in log_file__ and abort program
@@ -52,10 +56,15 @@ public:
     //{-------------------------------------------------------------------
     //! @brief used when we catch error
     //!
+    //! @param object of class Error
+    //!
     //! @warning if !filename, line <= 0 or !pretty_function constructor write it in log_file__ and abort program
     //}-------------------------------------------------------------------
     Error (const Error & that);
 
+    //{-------------------------------------------------------------------
+    //! @brief print last error into log_file__
+    //}-------------------------------------------------------------------
     void print_error ();
 
 private:
@@ -80,7 +89,11 @@ private:
     //! @brief number of error
     error_type error_;
 
+    //{-------------------------------------------------------------------
     //! @brief class Error writing all in this file
+    //!
+    //! @warning log_file__ updates every session
+    //}-------------------------------------------------------------------
     static FILE * log_file__;
 };
 

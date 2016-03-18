@@ -86,7 +86,7 @@ void Model::open (const char * filename)
                     catch (Error err)
                     {
                         err.print_error ();
-                        abort ();
+                        exit (1);
                     }
                 }
                 else
