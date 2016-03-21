@@ -8,6 +8,7 @@
 #include <cmath>
 #include <assert.h>
 #include "Model.h"
+#include "Errors.h"
 
 
 Model::Model ():
@@ -147,7 +148,10 @@ void Model::choose_the_best_cood (size_t width, size_t height)
         x_max = x_max > v.x_ ? x_max : v.x_;
         y_max = y_max > v.y_ ? y_max : v.y_;
     }
-    // todo if x_min or something else == 0!!!
+
+    if (!x_min || !x_max || !y_min || !y_max)
+        WPRINT (ZERO_COORDINATE);
+
     float ratio_x = (float) std::min (std::abs (1.0 * width / x_min), std::abs (1.0 * width / x_max));
     float ratio_y = (float) std::min (std::abs (1.0 * height / y_min), std::abs (1.0 * height / y_max));
     float best_ratio = std::min (ratio_x, ratio_y);

@@ -9,9 +9,10 @@
 
 //! @brief use in other files there are we throw something
 #define THROW( type_error )     {\
-                                    Error oh_now_I_have_an_error ( type_error, __FILE__, __LINE__, __PRETTY_FUNCTION__);\
+                                    Error oh_now_I_have_an_error (type_error, __FILE__, __LINE__, __PRETTY_FUNCTION__);\
                                     throw oh_now_I_have_an_error;\
                                 }
+#define WPRINT( type_error )    Error::print_warning (type_error, __FILE__, __LINE__, __PRETTY_FUNCTION__);
 
 //{-------------------------------------------------------------------
 //! @brief enum with all errors
@@ -30,7 +31,8 @@ enum error_type
     NEGATIVE_COORDINATE,        //!<coordinate is less than zero
     TOO_BIG_COORDINATE,         //!<coordinate is bigger than image width or height
     INDEX_OUT_OF_BOUNDS,        //!<array index out of bounds
-    ZERO_SIZE                   //!<used a number which meaning is zero, but it's invalid value
+    ZERO_SIZE,                  //!<used a number which meaning is zero, but it's invalid value
+    ZERO_COORDINATE             //!<algorithm can work incorrectly
 };
 
 //! @brief class to work with errors
@@ -66,6 +68,19 @@ public:
     //! @brief print last error into log_file__
     //}-------------------------------------------------------------------
     void print_error ();
+
+    //{-------------------------------------------------------------------
+    //! @brief global function which print warnings in file
+    //!
+    //! @param err              error from enum error_type which can be regarded as a warning
+    //! @param filename         name of the file where error occured
+    //! @param line             line in the file where error occured
+    //! @param pretty_function  name of the function where error occured
+    //!
+    //! @warning function write info into log_file__. If it can't open log_file__ all program aborting!
+    //! @warning if !filename, line <= 0 or !pretty_function function write it in log_file__ and abort program
+    //}-------------------------------------------------------------------
+    static void print_warning (error_type err, const char * filename, int line, const char * pretty_function);
 
 private:
 

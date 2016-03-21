@@ -15,7 +15,7 @@ Error::Error (error_type err, const char * filename, int line, const char * pret
     log_file__ = fopen ("error_log.txt", "wb");
     if (!log_file__)
     {
-        printf ("sorry, but I can't open log file. Bye\n");
+        printf ("sorry, but I can't open log file in %s line: %d. Bye\n", __FILE__, __LINE__);
         exit (1);
     }
 
@@ -86,10 +86,39 @@ Error::Error (const Error & that)
     this->line_  = that.line_;
     strncpy (this->function_, that.function_, strlen (that.function_));
     strncpy (this->filename_, that.filename_, strlen (that.filename_));
-
 }
 
 void Error::print_error ()
 {
     printf ("error printing: %lu |\t%s |\t%d |\t%s\n", ENUM_TO_STR (error_), filename_, line_, function_);
+}
+
+void Error::print_warning (error_type err, const char * filename, int line, const char * pretty_function)
+{
+    log_file__ = fopen ("error_log.txt", "wb");
+    if (!log_file__)
+    {
+        printf ("sorry, but I can't open log file in %s line: %d. Bye\n", __FILE__, __LINE__);
+        exit (1);
+    }
+
+    if (!filename)
+    {
+        fprintf (log_file__, "!--FILENAME IS NULL\t%s\t%d\t%s\n", __FILE__, __LINE__, __PRETTY_FUNCTION__);
+        exit (1);
+    }
+    if (line <= 0)
+    {
+        fprintf (log_file__, "!--LINE <= 0\t%s\t%d\t%s\n", __FILE__, __LINE__, __PRETTY_FUNCTION__);
+        exit (1);
+    }
+    if (!pretty_function)
+    {
+        fprintf (log_file__, "!--PRETTY_FUNCTION IS NULL\t%s\t%d\t%s\n", __FILE__, __LINE__, __PRETTY_FUNCTION__);
+        exit (1);
+    }
+
+    fprintf (log_file__, "warning occured %lu |\t%s |\t%d |\t%s\n", ENUM_TO_STR (err), filename, line, pretty_function);
+    fflush (log_file__);
+    fclose (log_file__);
 }
