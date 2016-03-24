@@ -36,12 +36,12 @@ public:
     //{-------------------------------------------------------
     //! @return number of faces with contained in this model
     //}-------------------------------------------------------
-    size_t nfaces ();
+    size_t nfaces () const;
 
     //{-------------------------------------------------------
     //! @return number of verts with contained in this model
     //}-------------------------------------------------------
-    size_t nverts ();
+    size_t nverts () const;
 
     //{-------------------------------------------------------
     //! @param i vert index
@@ -50,7 +50,7 @@ public:
     //!
     //! @return vert with index i
     //}-------------------------------------------------------
-    const Vec3f &vert (size_t i);
+    const Vec3f &vert (size_t i) const;
 
     //{-------------------------------------------------------
     //! @param i face index
@@ -59,7 +59,7 @@ public:
     //!
     //! @return face with index i
     //}-------------------------------------------------------
-    const Vec3i &face (size_t i);
+    const Vec3i &face (size_t i) const;
 
     //{-------------------------------------------------------
     //! @brief change the coordinates to the image has been in full screen

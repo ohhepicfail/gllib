@@ -105,24 +105,24 @@ void Model::open (const char * filename)
         THROW (NO_FACES_IN_FILE);
 }
 
-size_t Model::nfaces ()
+size_t Model::nfaces () const
 {
     return faces_.size ();
 }
 
-size_t Model::nverts ()
+size_t Model::nverts () const
 {
     return verts_.size ();
 }
 
-const Vec3f & Model::vert (size_t i)
+const Vec3f & Model::vert (size_t i) const
 {
     if (i >= verts_.size ())
         THROW (TOO_HIGH_VERT_INDEX);
     return verts_[i];
 }
 
-const Vec3i & Model::face (size_t i)
+const Vec3i & Model::face (size_t i) const
 {
     if (i >= faces_.size ())
         THROW (TOO_HIGH_FACE_INDEX);
@@ -160,5 +160,6 @@ void Model::choose_the_best_cood (size_t width, size_t height)
     {
         verts_[i].x_ = (verts_[i].x_ * best_ratio + width) / 2;
         verts_[i].y_ = (verts_[i].y_ * best_ratio + height) / 2;
+        verts_[i].z_ = (verts_[i].z_ * best_ratio);
     }
 }

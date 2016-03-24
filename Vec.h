@@ -5,14 +5,16 @@
 #ifndef GLLIB_VEC3_H
 #define GLLIB_VEC3_H
 
+#include <stddef.h>
+#include <stdio.h>
+#include <math.h>
+#include "Errors.h"
+
+
 #define THROW( type_error )     {\
                                     Error err ( type_error, __FILE__, __LINE__, __PRETTY_FUNCTION__);\
                                     throw err;\
                                 }
-
-#include <stddef.h>
-#include <stdio.h>
-#include "Errors.h"
 
 //! @brief class works with 3 numbers
 template <typename t> class Vec3
@@ -131,6 +133,45 @@ public:
         return *this;
     }
 
+    //{---------------------------------------------------------------
+    //! @brief divide Vec3<t> on the number
+    //!
+    //! @param denominator float number
+    //!
+    //! @throw ZERO_SIZE denominator = 0
+    //}---------------------------------------------------------------
+    void operator /= (float denominator)
+    {
+        if (denominator == 0.0)
+            THROW (ZERO_SIZE);
+
+        *this = Vec3<t> (x_ / denominator, y_ / denominator, z_ / denominator);
+    }
+
+    //{---------------------------------------------------------------
+    //! @brief simple operator += that works like standard +=
+    //!
+    //! @param that Vec3<t> which we add to this
+    //}---------------------------------------------------------------
+    void operator += (const Vec3<t> & that)
+    {
+        x_ += that.x_;
+        y_ += that.y_;
+        z_ -= that.z_;
+    }
+
+    //{---------------------------------------------------------------
+    //! @brief simple operator -= that works like standard -=
+    //!
+    //! @param that Vec3<t> which we subtraction from this
+    //}---------------------------------------------------------------
+    void operator -= (const Vec3<t> & that)
+    {
+        x_ -= that.x_;
+        y_ -= that.y_;
+        z_ -= that.z_;
+    }
+
     t x_;   //!<First element of array (You can use x_ if you works with coordinates).
             //!<Otherwise don't use it. Work with elements such as array.
     t y_;   //!<Second element of array (You can use y_ if you works with coordinates).
@@ -139,6 +180,92 @@ public:
             //!<Otherwise don't use it. Work with elements such as array.
 };
 
+//{---------------------------------------------------------------
+//! @brief normalize Vec3<t>
+//!
+//! @param vec Vec3<t> that function normalized
+//!
+//! @return copy of the normalized Vec3<t>
+//}---------------------------------------------------------------
+template <typename t> Vec3<t>  normalize (const Vec3<t> & vec)
+{
+    Vec3<t> new_vec = vec;
+    float norm = (float) sqrt (vec.x_ * vec.x_ + vec.y_ * vec.y_ + vec.z_ * vec.z_);
+
+    if (norm == 0.0)
+        new_vec = Vec3<t> ((t) 0.0, (t) 0.0, (t) 0.0);
+    else
+        new_vec /= norm;
+
+    return new_vec;
+}
+
+//{---------------------------------------------------------------
+//! @brief vector product of the two vectors
+//!
+//! @param [in] v1, [in] v2 vectors
+//!
+//! @return copy of vector that is a result of vector product
+//}---------------------------------------------------------------
+template <typename t> Vec3<t> vector_product (const Vec3<t> & v1, const Vec3<t> & v2)
+{
+    return Vec3<t> (v1.y_ * v2.z_ - v1.z_ * v2.y_
+                  , v1.z_ * v2.x_ - v1.x_ * v2.z_
+                  , v1.x_ * v2.y_ - v1.y_ * v2.x_);
+}
+
+//{---------------------------------------------------------------
+//! @brief scalar product of the two vectors
+//!
+//! @param [in] v1, [in] v2 vectors
+//!
+//! @return number that is result of scalar product
+//}---------------------------------------------------------------
+template <typename t> t scalar_product (const Vec3<t> & v1, const Vec3<t> v2)
+{
+    return v1.x_ * v2.x_ + v1.y_ * v2.y_ + v1.z_ * v2.z_;
+}
+
+//{---------------------------------------------------------------
+//! @brief add two vectors
+//!
+//! @param [in] v1, [in] v2 vectors
+//!
+//! @return copy of the result addition
+//}---------------------------------------------------------------
+template <typename t> Vec3<t> operator + (const Vec3<t> & v1, const Vec3<t> & v2)
+{
+    Vec3<t> new_vec = v1;
+    new_vec += v2;
+
+    return new_vec;
+}
+
+//{---------------------------------------------------------------
+//! @brief calculates the difference of two vectors
+//!
+//! @param [in] v1, [in] v2 vectors.  Function calculates v1 - v2!
+//!
+//! @return copy of the result subtraction
+//}---------------------------------------------------------------
+template <typename t> Vec3<t> operator - (const Vec3<t> & v1, const Vec3<t> & v2)
+{
+    Vec3<t> new_vec = v1;
+    new_vec -= v2;
+
+    return new_vec;
+}
+
+typedef Vec3<float> Vec3f;
+typedef Vec3<int>   Vec3i;
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
 
 //! @brief class works with 2 numbers
 template <class t> class Vec2
@@ -213,6 +340,28 @@ public:
     }
 
     //{---------------------------------------------------------------
+    //! @brief simple operator += that works like standard +=
+    //!
+    //! @param that Vec3<t> which we add to this
+    //}---------------------------------------------------------------
+    void operator += (const Vec2<t> & that)
+    {
+        x_ += that.x_;
+        y_ += that.y_;
+    }
+
+    //{---------------------------------------------------------------
+    //! @brief simple operator -= that works like standard -=
+    //!
+    //! @param that Vec3<t> which we subtraction from this
+    //}---------------------------------------------------------------
+    void operator -= (const Vec2<t> & that)
+    {
+        x_ -= that.x_;
+        y_ -= that.y_;
+    }
+
+    //{---------------------------------------------------------------
     //! @brief access to the array elements
     //!
     //! @param i element index
@@ -254,8 +403,36 @@ public:
             //!<Otherwise don't use it. Work with elements such as array.
 };
 
-typedef Vec3<float> Vec3f;
-typedef Vec3<int>   Vec3i;
+//{---------------------------------------------------------------
+//! @brief add two vectors
+//!
+//! @param [in] v1, [in] v2 vectors
+//!
+//! @return copy of the result addition
+//}---------------------------------------------------------------
+template <typename t> Vec2<t> operator + (const Vec2<t> & v1, const Vec2<t> & v2)
+{
+    Vec2<t> new_vec = v1;
+    new_vec += v2;
+
+    return new_vec;
+}
+
+//{---------------------------------------------------------------
+//! @brief calculates the difference of two vectors
+//!
+//! @param [in] v1, [in] v2 vectors.  Function calculates v1 - v2!
+//!
+//! @return copy of the result subtraction
+//}---------------------------------------------------------------
+template <typename t> Vec2<t> operator - (const Vec2<t> & v1, const Vec2<t> & v2)
+{
+    Vec2<t> new_vec = v1;
+    new_vec -= v2;
+
+    return new_vec;
+}
+
 typedef Vec2<float> Vec2f;
 typedef Vec2<int>   Vec2i;
 
