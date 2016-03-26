@@ -2,8 +2,8 @@
 // Created by epicfail on 03.03.16.
 //
 
-#ifndef GLLIB_VEC3_H
-#define GLLIB_VEC3_H
+#ifndef GLLIB_VEC_H
+#define GLLIB_VEC_H
 
 #include <stddef.h>
 #include <stdio.h>
@@ -172,6 +172,14 @@ public:
         z_ -= that.z_;
     }
 
+    // todo: doc it
+    void operator *= (float num)
+    {
+        x_ *= num;
+        y_ *= num;
+        z_ *= num;
+    }
+
     t x_;   //!<First element of array (You can use x_ if you works with coordinates).
             //!<Otherwise don't use it. Work with elements such as array.
     t y_;   //!<Second element of array (You can use y_ if you works with coordinates).
@@ -254,6 +262,14 @@ template <typename t> Vec3<t> operator - (const Vec3<t> & v1, const Vec3<t> & v2
     new_vec -= v2;
 
     return new_vec;
+}
+
+// todo: doc it
+template <typename t> Vec3<t> operator * (const Vec3<t> & vec, float num)
+{
+    Vec3<t> res_vec = vec;
+    res_vec *= num;
+    return res_vec;
 }
 
 typedef Vec3<float> Vec3f;
@@ -436,4 +452,4 @@ template <typename t> Vec2<t> operator - (const Vec2<t> & v1, const Vec2<t> & v2
 typedef Vec2<float> Vec2f;
 typedef Vec2<int>   Vec2i;
 
-#endif //GLLIB_VEC3_H
+#endif //GLLIB_VEC_H

@@ -1,6 +1,7 @@
 //epicfail@gmail.com
 
 #include <stdlib.h>
+#include <limits>
 #include "tgaimage.h"
 #include "glLib.h"
 #include "Model.h"
@@ -8,9 +9,10 @@
 const TGAColor white = TGAColor (255, 255, 255, 255);
 const TGAColor red   = TGAColor (255, 0,   0,   255);
 const TGAColor green = TGAColor (0,   255, 0,   255);
+const TGAColor blue  = TGAColor(0, 0, 255, 255);
 
-const int width  = 10000;
-const int height = 10000;
+const int width  = 5000;
+const int height = 5000;
 
 void draw_grid (const Model & model, TGAImage & image, const TGAColor & color);
 
@@ -20,7 +22,7 @@ int main ()
 
     try
     {
-        model.open ("obj/Avent.obj");
+        model.open ("obj/african_head.obj");
         model.choose_the_best_cood (width, height);
     }
     catch (Error err)
@@ -33,14 +35,22 @@ int main ()
 
     //draw_grid (model, image, red);
 
+    if ((float) width * height >= (float) std::numeric_limits<int>::max ())
+        WPRINT (WBIG_SIZE);
+    int * zbuffer = new int[width * height];
+    if (!zbuffer)
+        THROW (ZERO_POINTER);
+    for (int i = width * height - 1; i >= 0; i--)
+        zbuffer[i] = std::numeric_limits<int>::min ();
+
     for (int i=0; i<model.nfaces(); i++) {
         Vec3i face = model.face(i);
-        Vec2i screen_coords[3];
+        Vec3i screen_coords[3];
         Vec3f world_coords[3];
         for (int j=0; j<3; j++)
         {
             world_coords[j] = model.vert (face[j] - 1);
-            screen_coords[j] = Vec2i (world_coords[j].x_, world_coords[j].y_);
+            screen_coords[j] = Vec3i (world_coords[j].x_, world_coords[j].y_, world_coords[j].z_);
         }
 
         Vec3f triangle_norm = vector_product (world_coords[2] - world_coords[1], world_coords[2] - world_coords[0]);
@@ -49,11 +59,17 @@ int main ()
         float intensity = scalar_product (triangle_norm, light_dir);
 
         if (intensity > 0)
-            glLib::triangle (screen_coords[0], screen_coords[1], screen_coords[2], image, TGAColor(intensity * 255, intensity * 255, intensity * 255, 255));
+        {
+            int temp = std::abs ((int) (intensity * 255));
+            glLib::triangle (screen_coords[0], screen_coords[1], screen_coords[2], image,
+                             TGAColor (temp, temp, temp, 255), zbuffer);
+        }
     }
 
     image.flip_vertically();
     image.write_tga_file("output.tga");
+
+    delete[] zbuffer;
     return 0;
 }
 

@@ -150,7 +150,7 @@ void Model::choose_the_best_cood (size_t width, size_t height)
     }
 
     if (!x_min || !x_max || !y_min || !y_max)
-        WPRINT (ZERO_COORDINATE);
+        WPRINT (WZERO_COORDINATE);
 
     float ratio_x = (float) std::min (std::abs (1.0 * width / x_min), std::abs (1.0 * width / x_max));
     float ratio_y = (float) std::min (std::abs (1.0 * height / y_min), std::abs (1.0 * height / y_max));

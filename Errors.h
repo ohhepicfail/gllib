@@ -16,6 +16,8 @@
 
 //{-------------------------------------------------------------------
 //! @brief enum with all errors
+//!
+//! @warning suffix W if warning
 //}-------------------------------------------------------------------
 enum error_type
 {
@@ -32,7 +34,9 @@ enum error_type
     TOO_BIG_COORDINATE,         //!<coordinate is bigger than image width or height
     INDEX_OUT_OF_BOUNDS,        //!<array index out of bounds
     ZERO_SIZE,                  //!<used a number which meaning is zero, but it's invalid value
-    ZERO_COORDINATE             //!<algorithm can work incorrectly
+    WZERO_COORDINATE,           //!<algorithm can work incorrectly
+    ZERO_POINTER,               //!<pointer is zero
+    WBIG_SIZE                   //!<extremely big size
 };
 
 //! @brief class to work with errors
