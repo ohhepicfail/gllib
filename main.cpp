@@ -11,8 +11,8 @@ const TGAColor red   = TGAColor (255, 0,   0,   255);
 const TGAColor green = TGAColor (0,   255, 0,   255);
 const TGAColor blue  = TGAColor(0, 0, 255, 255);
 
-const int width  = 5000;
-const int height = 5000;
+const int width  = 10000;
+const int height = 10000;
 
 void draw_grid (const Model & model, TGAImage & image, const TGAColor & color);
 

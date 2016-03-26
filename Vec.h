@@ -172,7 +172,11 @@ public:
         z_ -= that.z_;
     }
 
-    // todo: doc it
+    //{---------------------------------------------------------------
+    //! @brief each coordinate is multiplied by the number and the result is stored in the caller
+    //!
+    //! @param num  number, which is multiplied by the Vec3<t>
+    //}---------------------------------------------------------------
     void operator *= (float num)
     {
         x_ *= num;
@@ -264,7 +268,14 @@ template <typename t> Vec3<t> operator - (const Vec3<t> & v1, const Vec3<t> & v2
     return new_vec;
 }
 
-// todo: doc it
+//{---------------------------------------------------------------
+//! @brief calculates the multiplication of Vec3<t> and num
+//!
+//! @param [in] vec object Vec3<t>
+//! @param [in] num number, which is multiplied by the Vec3<t>
+//!
+//! @return copy of the result multiplication
+//}---------------------------------------------------------------
 template <typename t> Vec3<t> operator * (const Vec3<t> & vec, float num)
 {
     Vec3<t> res_vec = vec;

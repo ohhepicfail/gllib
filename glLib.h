@@ -26,21 +26,18 @@ public:
     //}-----------------------------------------------------------------------
     static void line (Vec2i begin, Vec2i end, TGAImage & image, const TGAColor & color);
 
-    //todo: redoc it
     //{-----------------------------------------------------------------------
     //! @brief draw a triangle in .tga  image
     //!
-    //! @param [in]  t0, t1, t2 3   lines forming a triangle
+    //! @param [in]  t0, t1, t2     3 lines forming a triangle
     //! @param [out] image          TGAImage object in which line is drawn
     //! @param [in]  color          triangle color
+    //! @param [in]  zbuffer        int array with image width * height size
     //!
-    //! @warning there aren't "const Vec2i &", because function swapping objects into yourself.
+    //! @warning there aren't "const Vec3i &", because function swapping objects into yourself.
     //!          So, you can see copy constructor here.
     //}-----------------------------------------------------------------------
     static void triangle (Vec3i t0, Vec3i t1, Vec3i t2, TGAImage & image, const TGAColor & color, int * zbuffer);
-
-    // todo: doc it
-    static void rasterize (Vec2i t0, Vec2i t1, TGAImage & image, const TGAColor & color, int * ybuffer);
 };
 
 
