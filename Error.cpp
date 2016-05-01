@@ -46,7 +46,7 @@ Error::Error (error_type err, const char * filename, int line, const char * pret
 
     strncpy (function_, pretty_function, strlen (pretty_function));
 
-    fprintf (log_file__, "error occured %lu |\t%s |\t%d |\t%s\n", ENUM_TO_STR (error_), filename_, line_, function_);
+    fprintf (log_file__, "error occured %u |\t%s |\t%d |\t%s\n", ENUM_TO_STR (error_), filename_, line_, function_);
     fflush (log_file__);
 
 }
@@ -90,7 +90,7 @@ Error::Error (const Error & that)
 
 void Error::print_error ()
 {
-    printf ("error printing: %lu |\t%s |\t%d |\t%s\n", ENUM_TO_STR (error_), filename_, line_, function_);
+    printf ("error printing: %u |\t%s |\t%d |\t%s\n", ENUM_TO_STR (error_), filename_, line_, function_);
 }
 
 void Error::print_warning (error_type err, const char * filename, int line, const char * pretty_function)
@@ -118,7 +118,7 @@ void Error::print_warning (error_type err, const char * filename, int line, cons
         exit (1);
     }
 
-    fprintf (log_file__, "warning occured %lu |\t%s |\t%d |\t%s\n", ENUM_TO_STR (err), filename, line, pretty_function);
+    fprintf (log_file__, "warning occured %u |\t%s |\t%d |\t%s\n", ENUM_TO_STR (err), filename, line, pretty_function);
     fflush (log_file__);
     fclose (log_file__);
 }

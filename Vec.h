@@ -11,11 +11,6 @@
 #include "Errors.h"
 
 
-#define THROW( type_error )     {\
-                                    Error err ( type_error, __FILE__, __LINE__, __PRETTY_FUNCTION__);\
-                                    throw err;\
-                                }
-
 //! @brief class works with 3 numbers
 template <typename t> class Vec3
 {
@@ -82,7 +77,7 @@ public:
     //!
     //! @return int number that lies on the index
     //}---------------------------------------------------------------
-    const t & operator [] (size_t i)
+    t & operator [] (size_t i)
     {
         if (i == 0)
             return x_;
@@ -182,6 +177,16 @@ public:
         x_ *= num;
         y_ *= num;
         z_ *= num;
+    }
+
+    //{---------------------------------------------------------------
+    //! @brief x1*x2 + y1*y2 + z1*z2
+    //!
+    //! @return multiplication result
+    //}---------------------------------------------------------------
+    float operator* (const Vec3<t> &that)
+    {
+        return x_*that.x_ + y_*that.y_ + z_*that.z_;
     }
 
     t x_;   //!<First element of array (You can use x_ if you works with coordinates).
@@ -285,6 +290,7 @@ template <typename t> Vec3<t> operator * (const Vec3<t> & vec, float num)
 
 typedef Vec3<float> Vec3f;
 typedef Vec3<int>   Vec3i;
+
 
 
 

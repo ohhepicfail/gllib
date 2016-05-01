@@ -36,7 +36,7 @@ public:
     //{-------------------------------------------------------
     //! @return number of faces with contained in this model
     //}-------------------------------------------------------
-    size_t nfaces () const;
+    size_t nvfaces () const;
 
     //{-------------------------------------------------------
     //! @return number of verts with contained in this model
@@ -53,13 +53,21 @@ public:
     const Vec3f &vert (size_t i) const;
 
     //{-------------------------------------------------------
-    //! @param i face index
+    //! @param i vface index
     //!
     //! @throw TOO_HIGH_FACE_INDEX  index is more than number of faces in array
     //!
-    //! @return face with index i
+    //! @return vface with index i
     //}-------------------------------------------------------
-    const Vec3i &face (size_t i) const;
+    const Vec3i &vface (size_t i) const;
+
+    //{-------------------------------------------------------
+    //! @param iface index in f
+    //! @param nvert vert index in f
+    //!
+    //! return normalized vn vector
+    //}-------------------------------------------------------
+    Vec3f norm (size_t iface, size_t nvert) const;
 
     //{-------------------------------------------------------
     //! @brief change the coordinates to the image has been in full screen
@@ -71,7 +79,7 @@ public:
     //!
     //! @warning it can greatly slow down program
     //}-------------------------------------------------------
-    void    choose_the_best_cood (size_t width, size_t height);
+    void    normalize_coordinates (size_t width, size_t height);
 private:
     //{-------------------------------------------------------
     //! @brief copy constructor is disabled
@@ -88,7 +96,9 @@ private:
     void    operator = (const Model & that);
 
     std::vector <Vec3f> verts_;     //!<array of verts
-    std::vector <Vec3i> faces_;     //!<array of faces
+    std::vector <Vec3i> vfaces_;    //!<array of faces
+    std::vector <Vec3f> norm_v_;    //!<array of norm verts
+    std::vector <Vec3i> norm_f_;    //!<array of norm faces
 };
 
 

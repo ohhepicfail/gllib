@@ -7,31 +7,30 @@
 #include <string.h>
 #include <cmath>
 #include <assert.h>
+#include <cctype>
 #include "Model.h"
-#include "Errors.h"
 
 
 Model::Model ():
         verts_ (0),
-        faces_ (0)
-{
-}
+        vfaces_ (0)
+{}
 
 
 Model::Model (const Model & that)
 {
-    assert (("Ooooooh, nooooo! You use copy constructor Model::Model (const Model &)", &that, false));
+	printf ("Ooooooh, nooooo! You use copy constructor Model::Model (const Model &)\n");
+    assert (false);
 }
 
 void Model::operator = (const Model & that)
 {
-    assert (("Ooooooh, nooooo! You use Model::operator = (const Model & that)", &that, false));
+    printf ("Ooooooh, nooooo! You use Model::operator = (const Model & that)\n");
+    assert (false);
 }
 
 Model::~Model ()
-{
-
-}
+{}
 
 void Model::open (const char * filename)
 {
@@ -58,6 +57,7 @@ void Model::open (const char * filename)
     if (!pobj)
         THROW (NO_MODEL_IN_FILE);
 
+    // parcer
     while (pobj)
     {
         char str_to_cmp[3] = {*pobj, *(pobj + 1), '\0'};
@@ -66,34 +66,43 @@ void Model::open (const char * filename)
         {
             Vec3f vec;
             char trash = 0;
-
             sscanf (pobj, "%c%f%f%f", &trash, &vec.x_, &vec.y_, &vec.z_);
-
             verts_.push_back (vec);
+        }
+        else if (strcmp (str_to_cmp, "vn") == 0)
+        {
+            pobj++;
+            Vec3f vec;
+            char trash = 0;
+            sscanf (pobj, "%c%f%f%f", &trash, &vec.x_, &vec.y_, &vec.z_);
+            norm_v_.push_back (vec);
         }
         else if (strcmp (str_to_cmp, "f ") == 0)
         {
-            Vec3i vec;
-            for (int i = 0; i < 3;)
+            Vec3i v;
+            Vec3i vt;
+            Vec3i vn;
+
+            for (size_t i = 0; i < 3; i++)
             {
-                if (*pobj == ' ')
-                {
-                    try
-                    {
-                        pobj++;
-                        sscanf (pobj, "%d", &vec[i]);
-                        i++;
-                    }
-                    catch (Error err)
-                    {
-                        err.print_error ();
-                        exit (1);
-                    }
-                }
-                else
+                // there are really awful code
+                while (!isdigit (*pobj))
+                    pobj++;
+                sscanf (pobj, "%d", &v[i]);
+                while (*pobj != '/')
+                    pobj++;
+                pobj++;
+                if (*pobj != '/')
+                    sscanf (pobj, "%d", &vt[i]);
+                while (*pobj != '/')
+                    pobj++;
+                sscanf (pobj, "/%d", &vn[i]);
+                while (!isspace (*pobj))
                     pobj++;
             }
-            faces_.push_back (vec);
+
+            vfaces_.push_back (v);
+            norm_f_.push_back (vn);
         }
 
         pobj = strtok (NULL, "\n");
@@ -101,13 +110,13 @@ void Model::open (const char * filename)
 
     if (nverts () == 0)
         THROW (NO_VERTS_IN_FILE);
-    if (nfaces () == 0)
+    if (nvfaces () == 0)
         THROW (NO_FACES_IN_FILE);
 }
 
-size_t Model::nfaces () const
+size_t Model::nvfaces () const
 {
-    return faces_.size ();
+    return vfaces_.size ();
 }
 
 size_t Model::nverts () const
@@ -122,14 +131,24 @@ const Vec3f & Model::vert (size_t i) const
     return verts_[i];
 }
 
-const Vec3i & Model::face (size_t i) const
+const Vec3i & Model::vface (size_t i) const
 {
-    if (i >= faces_.size ())
+    if (i >= vfaces_.size ())
         THROW (TOO_HIGH_FACE_INDEX);
-    return faces_[i];
+    return vfaces_[i];
 }
 
-void Model::choose_the_best_cood (size_t width, size_t height)
+Vec3f Model::norm (size_t iface, size_t nvert) const
+{
+    if (iface >= norm_f_.size ())
+        THROW (TOO_HIGH_FACE_INDEX);
+    Vec3i vec = norm_f_.at (iface);
+    int idx = vec.at (nvert) - 1;
+    Vec3f vn = norm_v_[idx];
+    return normalize (vn);
+}
+
+void Model::normalize_coordinates (size_t width, size_t height)
 {
     if (!width || !height)
         THROW (ZERO_SIZE);
@@ -139,6 +158,7 @@ void Model::choose_the_best_cood (size_t width, size_t height)
     float y_min = 0.0;      //bottom
     float y_max = 0.0;      //top
 
+    // look for extreme coordinates
     for (size_t i = 0; i < nverts (); i++)
     {
         Vec3f v = vert (i);
@@ -149,17 +169,15 @@ void Model::choose_the_best_cood (size_t width, size_t height)
         y_max = y_max > v.y_ ? y_max : v.y_;
     }
 
-    if (!x_min || !x_max || !y_min || !y_max)
-        WPRINT (WZERO_COORDINATE);
-
     float ratio_x = (float) std::min (std::abs (1.0 * width / x_min), std::abs (1.0 * width / x_max));
     float ratio_y = (float) std::min (std::abs (1.0 * height / y_min), std::abs (1.0 * height / y_max));
     float best_ratio = std::min (ratio_x, ratio_y);
 
+    // normalized
     for (size_t i = 0; i < nverts (); i++)
     {
         verts_[i].x_ = (verts_[i].x_ * best_ratio + width) / 2;
         verts_[i].y_ = (verts_[i].y_ * best_ratio + height) / 2;
-        verts_[i].z_ = (verts_[i].z_ * best_ratio);
+        verts_[i].z_ = (verts_[i].z_ * best_ratio + width) / 2;
     }
 }
